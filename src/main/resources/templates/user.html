@@ -30,7 +30,15 @@
 <body>
 
 <div class="container">
-  <h2 class="text-center">User Management</h2>
+<!--  <h2 class="text-center">User Management</h2>-->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-center">
+      Chào <span th:text="${session.user != null ? session.user.fullname : 'Khách'}"></span>
+    </h2>
+    <form action="/logout" method="get">
+      <button type="submit" class="btn btn-danger">Đăng xuất</button>
+    </form>
+  </div>
 
   <!-- Form tìm kiếm -->
   <form action="/users" method="get" class="d-flex mb-3">

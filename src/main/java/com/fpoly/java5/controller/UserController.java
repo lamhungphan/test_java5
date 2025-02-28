@@ -16,7 +16,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/")
+    @GetMapping({"/","/users"})
     public String listUsers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
         List<User> users;
         if (keyword != null && !keyword.isEmpty()) {
@@ -40,7 +40,7 @@ public class UserController {
     @PostMapping("/create")
     public String createUser(@ModelAttribute("user") User user) {
         userRepository.save(user);
-        return "redirect:/user";
+        return "redirect:/users";
     }
 
     @PostMapping("/update")
@@ -48,7 +48,7 @@ public class UserController {
         if (user.getId() != null && !user.getId().isEmpty()) {
             userRepository.save(user);
         }
-        return "redirect:/user";
+        return "redirect:/users";
     }
 
     @PostMapping("/delete/{id}")
@@ -56,6 +56,6 @@ public class UserController {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         }
-        return "redirect:/user";
+        return "redirect:/users";
     }
 }
