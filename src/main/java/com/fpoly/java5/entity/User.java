@@ -26,6 +26,8 @@ public class User {
     @Column(length = 50)
     private String email;
 
+    private String image;
+
     @Column(name = "admin", nullable = false)
     private boolean admin;
 }
