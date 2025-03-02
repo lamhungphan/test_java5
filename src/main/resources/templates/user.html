@@ -71,7 +71,13 @@
       <th>No</th>
       <th>User ID</th>
       <th>Password</th>
-      <th>Full-name</th>
+      <th>
+        <a th:href="@{/users(p=${page.number}, sortDir=${sortDir == 'asc' ? 'desc' : 'asc'})}">
+          Full-name
+          <span th:if="${sortDir == 'asc'}">⬆</span>
+          <span th:if="${sortDir == 'desc'}">⬇</span>
+        </a>
+      </th>
       <th>Email</th>
       <th>Role</th>
       <th>Actions</th>

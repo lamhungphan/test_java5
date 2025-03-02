@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,17 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping({"/","/users"})
-    public String listUsers( Model model,
-            @RequestParam(name = "p", required = false) Optional<Integer> p,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+    @GetMapping({"/", "/users"})
+    public String listUsers(Model model,
+                            @RequestParam(name = "p", required = false) Optional<Integer> p,
+                            @RequestParam(name = "keyword", required = false) String keyword,
+                            @RequestParam(name = "sortDir", required = false, defaultValue = "asc") String sortDir) {
 
         int currentPage = p.orElse(0);
         int pageSize = 5;
 
-        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), "fullname");
+        Pageable pageable = PageRequest.of(currentPage, pageSize, sort);
         Page<User> userPage;
 
         if (keyword != null && !keyword.isEmpty()) {
@@ -40,6 +43,8 @@ public class UserController {
         model.addAttribute("users", userPage.getContent());
         model.addAttribute("keyword", keyword);
         model.addAttribute("user", new User());
+        model.addAttribute("sortDir", sortDir);
+
         return "user";
     }
 
