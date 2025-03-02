@@ -3,6 +3,9 @@ package com.fpoly.java5.controller;
 import com.fpoly.java5.entity.User;
 import com.fpoly.java5.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,22 +20,43 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping({"/","/users"})
-    public String listUsers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        List<User> users;
+    public String listUsers( Model model,
+            @RequestParam(name = "p", required = false) Optional<Integer> p,
+            @RequestParam(name = "keyword", required = false) String keyword) {
+
+        int currentPage = p.orElse(0);
+        int pageSize = 5;
+
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<User> userPage;
+
         if (keyword != null && !keyword.isEmpty()) {
-            users = userRepository.findByFullname(keyword);
+            userPage = userRepository.findByFullnameContaining(keyword, pageable);
         } else {
-            users = userRepository.findAll();
+            userPage = userRepository.findAll(pageable);
         }
-        model.addAttribute("users", users);
+
+        model.addAttribute("page", userPage);
+        model.addAttribute("users", userPage.getContent());
+        model.addAttribute("keyword", keyword);
         model.addAttribute("user", new User());
         return "user";
     }
 
     @GetMapping("/edit/{id}")
-    public String editUser(@PathVariable("id") String id, Model model) {
+    public String editUser(@PathVariable("id") String id,
+                           @RequestParam(name = "p", required = false) Optional<Integer> p,
+                           Model model) {
         Optional<User> user = userRepository.findById(id);
-        model.addAttribute("users", userRepository.findAll());
+
+        int currentPage = p.orElse(0);
+        int pageSize = 5;
+
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        model.addAttribute("page", userPage);
+        model.addAttribute("users", userPage.getContent());
         model.addAttribute("user", user.orElse(new User()));
         return "user";
     }
