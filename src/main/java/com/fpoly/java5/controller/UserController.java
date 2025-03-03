@@ -7,27 +7,30 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class UserController {
-
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping({"/","/users"})
+    @GetMapping({"/", "/users"})
     public String listUsers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
         List<User> users;
+
         if (keyword != null && !keyword.isEmpty()) {
-            users = userRepository.findByFullname(keyword);
+            users = userRepository.findByEmailOrId("%"+keyword+"%");
         } else {
             users = userRepository.findAll();
         }
+
         model.addAttribute("users", users);
         model.addAttribute("user", new User());
         return "user";
     }
+
 
     @GetMapping("/edit/{id}")
     public String editUser(@PathVariable("id") String id, Model model) {
